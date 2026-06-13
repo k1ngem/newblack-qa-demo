@@ -1,0 +1,17 @@
+{
+  "name": "newblack-qa-demo",
+  "version": "1.0.0",
+  "description": "API test suite for Restful Booker - built as a demo project",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:report": "playwright test --reporter=html"
+  },
+  "keywords": [],
+  "author": "Emily King",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@playwright/test": "^1.60.0"
+  }
+}
