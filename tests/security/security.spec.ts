@@ -11,7 +11,9 @@ test.describe('Security', () => {
   });
 
   test('security observation - unauthenticated users can retrieve specific booking details', async ({ request }) => {
-    const bookingId = await createBooking(request);
+    const createResponse = await createBooking(request);
+    const bookingId = (await createResponse.json()).bookingid;
+
     // NOTE: Individual booking details including personal data accessible without auth.
     // In a production system this should be protected.
     const response = await request.get(`/booking/${bookingId}`);
@@ -19,7 +21,8 @@ test.describe('Security', () => {
   });
 
   test('invalid token is rejected on protected actions', async ({ request }) => {
-    const bookingId = await createBooking(request);
+    const createResponse = await createBooking(request);
+    const bookingId = (await createResponse.json()).bookingid;
 
     const response = await request.put(`/booking/${bookingId}`, {
       headers: {

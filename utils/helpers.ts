@@ -1,11 +1,14 @@
-import { APIRequestContext } from '@playwright/test';
+import { APIRequestContext, APIResponse } from '@playwright/test';
 import { testBooking } from '../data/testData';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 export async function getAuthToken(request: APIRequestContext): Promise<string> {
   const response = await request.post('/auth', {
     data: {
-      username: 'admin',
-      password: 'password123'
+      username: process.env.API_USERNAME,
+      password: process.env.API_PASSWORD
     }
   });
 
@@ -13,11 +16,9 @@ export async function getAuthToken(request: APIRequestContext): Promise<string> 
   return body.token;
 }
 
-export async function createBooking(request: APIRequestContext): Promise<number> {
-  const response = await request.post('/booking', {
+
+export async function createBooking(request: APIRequestContext): Promise<APIResponse> {
+  return await request.post('/booking', {
     data: testBooking
   });
-
-  const body = await response.json();
-  return body.bookingid;
 }

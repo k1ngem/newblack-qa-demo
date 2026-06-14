@@ -14,9 +14,7 @@ test.describe('Bookings', () => {
   });
 
   test('create a booking - returns new booking with ID', async ({ request }) => {
-    const response = await request.post('/booking', {
-      data: testBooking
-    });
+    const response = await createBooking(request);
 
     expect(response.status()).toBe(200);
 
@@ -27,7 +25,9 @@ test.describe('Bookings', () => {
   });
 
   test('get a specific booking by ID', async ({ request }) => {
-    const bookingId = await createBooking(request);
+    const createResponse = await createBooking(request);
+    const bookingId = (await createResponse.json()).bookingid;
+
     const response = await request.get(`/booking/${bookingId}`);
     expect(response.status()).toBe(200);
 
@@ -38,7 +38,8 @@ test.describe('Bookings', () => {
   });
 
   test('update a booking - changes are reflected', async ({ request }) => {
-    const bookingId = await createBooking(request);
+    const createResponse = await createBooking(request);
+    const bookingId = (await createResponse.json()).bookingid;
     const token = await getAuthToken(request);
 
     const response = await request.put(`/booking/${bookingId}`, {
@@ -56,7 +57,8 @@ test.describe('Bookings', () => {
   });
 
   test('delete a booking - booking no longer exists', async ({ request }) => {
-    const bookingId = await createBooking(request);
+    const createResponse = await createBooking(request);
+    const bookingId = (await createResponse.json()).bookingid;
     const token = await getAuthToken(request);
 
     const deleteResponse = await request.delete(`/booking/${bookingId}`, {
@@ -87,7 +89,8 @@ test.describe('Bookings', () => {
   });
 
   test('update a booking - fails without auth token', async ({ request }) => {
-    const bookingId = await createBooking(request);
+    const createResponse = await createBooking(request);
+    const bookingId = (await createResponse.json()).bookingid;
 
     const response = await request.put(`/booking/${bookingId}`, {
       data: updatedBooking
