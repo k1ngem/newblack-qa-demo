@@ -87,7 +87,8 @@ Core CRUD coverage for the bookings API:
 | Get a specific booking | Retrieves correct data by ID |
 | Update a booking | PUT with auth reflects changes |
 | Delete a booking | Booking returns 404 after deletion |
-| Create without required fields | Missing data returns 500 |
+| Create without lastname | Missing required field returns 500 |
+| Invalid date range | **Observation:** checkout before checkin is accepted (200) — should be rejected in production |
 | Get non-existent ID | Returns 404 for unknown booking |
 | Update without auth token | Returns 403 without authentication |
 
@@ -120,7 +121,6 @@ Rather than ignoring gaps in the API's auth model, they are documented as failin
 
 ## What I Would Add Next
 
-- **Environment variables** for credentials instead of hardcoded values in helpers
 - **`afterEach` cleanup** to delete test bookings created during a run
 - **Performance assertions** on response times for critical endpoints
 - **CI pipeline config** (GitHub Actions) to run the suite on every pull request
