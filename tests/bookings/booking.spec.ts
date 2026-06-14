@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { getAuthToken, createBooking } from '../../utils/helpers';
-import { testBooking, updatedBooking } from '../../data/testData';
+import { testBooking, updatedBooking, bookingMissingLastname, bookingWithInvalidDates } from '../../data/testData';
 
 test.describe('Bookings', () => {
 
@@ -72,15 +72,22 @@ test.describe('Bookings', () => {
     expect(getResponse.status()).toBe(404);
   });
 
-  test('create a booking - fails without required fields', async ({ request }) => {
+  test('create a booking - fails when lastname is missing', async ({ request }) => {
     const response = await request.post('/booking', {
-      data: {
-        firstname: 'Ron'
-        // missing lastname, totalprice, depositpaid, bookingdates
-      }
+      data: bookingMissingLastname
     });
 
     expect(response.status()).toBe(500);
+  });
+
+  test('create a booking - allows checkout date before checkin date', async ({ request }) => {
+    const response = await request.post('/booking', {
+      data: bookingWithInvalidDates
+    });
+
+    // NOTE: The API accepts a checkout date before the checkin date without validation.
+    // In a production system this should be rejected with a 400 or similar error.
+    expect(response.status()).toBe(200);
   });
 
   test('get a booking - returns 404 for non-existent ID', async ({ request }) => {
