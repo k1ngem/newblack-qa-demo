@@ -59,7 +59,7 @@ newblack-qa-demo/
 │   ├── health/
 │   │   └── health.spec.ts        # API availability check
 │   ├── bookings/
-│   │   └── bookings.spec.ts      # CRUD operations and negative cases
+│   │   └── booking.spec.ts      # CRUD operations and negative cases
 │   └── security/
 │       └── security.spec.ts      # Auth and security observations
 ├── utils/
@@ -75,7 +75,7 @@ newblack-qa-demo/
 ## Test Plan
 
 ### `health/health.spec.ts`
-Validates the API is up and returning a healthy response. A fast smoke check — if this fails, nothing else will work.
+Validates the API is up and returning a healthy response. A fast smoke check and if this fails, nothing else will work.
 
 ### `bookings/bookings.spec.ts`
 Core CRUD coverage for the bookings API:
@@ -87,8 +87,8 @@ Core CRUD coverage for the bookings API:
 | Get a specific booking | Retrieves correct data by ID |
 | Update a booking | PUT with auth reflects changes |
 | Delete a booking | Booking returns 404 after deletion |
-| Create without lastname | Missing required field returns 500 |
-| Invalid date range | **Observation:** checkout before checkin is accepted (200) — should be rejected in production |
+| Create without required fields | Missing data returns 500; a 400 would be more appropriate for invalid input |
+| Create with invalid date range | Checkout before checkin is accepted (200); should be rejected in production |
 | Get non-existent ID | Returns 404 for unknown booking |
 | Update without auth token | Returns 403 without authentication |
 
@@ -105,11 +105,11 @@ Covers authentication and flags security observations:
 
 ## Key Design Decisions
 
-**Centralised test data (`data/testData.ts`)**
+**Centralized test data (`data/testData.ts`)**
 All test data lives in one place. If names, dates, or pricing need to change, there is one file to update rather than hunting through every test.
 
 **Reusable helpers (`utils/helpers.ts`)**
-`getAuthToken` and `createBooking` are shared functions used across multiple test files. Follows the DRY principle — don't repeat yourself.
+`getAuthToken` and `createBooking` are shared functions used across multiple test files. Follows the DRY principle of don't repeat yourself.
 
 **Tests separated by concern**
 Health, bookings, and security live in separate folders. Each folder has a clear purpose and can be run independently.
@@ -121,11 +121,13 @@ Rather than ignoring gaps in the API's auth model, they are documented as failin
 
 ## What I Would Add Next
 
-- **`afterEach` cleanup** to delete test bookings created during a run
-- **Performance assertions** on response times for critical endpoints
-- **CI pipeline config** (GitHub Actions) to run the suite on every pull request
-- **Partial update tests** using PATCH in addition to PUT
-- **Concurrent request tests** to check for race conditions on booking creation
+- Filter/search coverage for GetBookingIds (firstname, lastname, date range), using uniquely-generated test data to avoid collisions with other bookings in this shared API
+- afterEach cleanup to delete test bookings created during a run
+- Environment variables for credentials instead of hardcoded values in helpers
+- Performance assertions on response times for critical endpoints
+- CI pipeline config (GitHub Actions) to run the suite on every pull request
+- Partial update tests using PATCH in addition to PUT
+- Concurrent request tests to check for race conditions on booking creation
 
 ---
 

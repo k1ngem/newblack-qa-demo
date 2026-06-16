@@ -5,7 +5,7 @@ test.describe('Security', () => {
 
   test('security observation - unauthenticated users can retrieve all bookings', async ({ request }) => {
     // NOTE: This endpoint returns all booking data without authentication.
-    // In a production system like EVA, this should require auth to protect customer data.
+    // In a production system, this should require auth to protect customer data.
     const response = await request.get('/booking');
     expect(response.status()).toBe(200);
   });
